@@ -516,6 +516,9 @@ void Unit::Update(const uint32 diff)
             m_lastManaUseTimer -= diff;
     }
 
+    if (CanHaveThreatList())
+        getThreatManager().UpdateForClient(diff);
+
     if (uint32 base_att = getAttackTimer(BASE_ATTACK))
         setAttackTimer(BASE_ATTACK, (diff >= base_att ? 0 : base_att - diff));
 
@@ -9017,6 +9020,9 @@ void Unit::AddThreat(Unit* pVictim, float threat /*= 0.0f*/, bool crit /*= false
 
 void Unit::DeleteThreatList()
 {
+    if (CanHaveThreatList(true) && !getThreatManager().isThreatListEmpty())
+        SendThreatClear();
+
     getThreatManager().clearReferences();
     getHostileRefManager().deleteReferences();
 }
